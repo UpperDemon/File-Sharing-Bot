@@ -7,4 +7,4 @@ pymongo
 dnspython
 # --- For-Web-Response ------- #
 aiohttp
-pyrate_limiter
+pyrate-limiter==2.7.4
