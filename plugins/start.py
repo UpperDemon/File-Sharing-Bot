@@ -1,17 +1,12 @@
-#(©)CodeXBotz
-
-
-
-
 import os
 import asyncio
 from pyrogram import Client, filters, __version__
 from pyrogram.enums import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated
-
+from plugins import ratelimiter
 from bot import Bot
-from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT
+from config import ADMINS, FORCE_MSG, START_MSG, CUSTOM_CAPTION, DISABLE_CHANNEL_BUTTON, PROTECT_CONTENT, START_IMG
 from helper_func import subscribed, encode, decode, get_messages
 from database.database import add_user, del_user, full_userbase, present_user
 
@@ -19,6 +14,7 @@ from database.database import add_user, del_user, full_userbase, present_user
 
 
 @Bot.on_message(filters.command('start') & filters.private & subscribed)
+#@ratelimiter
 async def start_command(client: Client, message: Message):
     id = message.from_user.id
     if not await present_user(id):
@@ -33,6 +29,7 @@ async def start_command(client: Client, message: Message):
         except:
             return
         string = await decode(base64_string)
+
         argument = string.split("-")
         if len(argument) == 3:
             try:
@@ -77,7 +74,7 @@ async def start_command(client: Client, message: Message):
 
             try:
                 await msg.copy(chat_id=message.from_user.id, caption = caption, parse_mode = ParseMode.HTML, reply_markup = reply_markup, protect_content=PROTECT_CONTENT)
-                await asyncio.sleep(0.5)
+                await asyncio.sleep(2)
             except FloodWait as e:
                 await asyncio.sleep(e.x)
                 await msg.copy(chat_id=message.from_user.id, caption = caption, parse_mode = ParseMode.HTML, reply_markup = reply_markup, protect_content=PROTECT_CONTENT)
@@ -88,13 +85,14 @@ async def start_command(client: Client, message: Message):
         reply_markup = InlineKeyboardMarkup(
             [
                 [
-                    InlineKeyboardButton("😊 About Me", callback_data = "about"),
+                    InlineKeyboardButton("😊 Help", callback_data = "about"),
                     InlineKeyboardButton("🔒 Close", callback_data = "close")
                 ]
             ]
         )
-        await message.reply_text(
-            text = START_MSG.format(
+        await message.reply_photo(
+            photo = START_IMG,
+            caption = START_MSG.format(
                 first = message.from_user.first_name,
                 last = message.from_user.last_name,
                 username = None if not message.from_user.username else '@' + message.from_user.username,
@@ -102,7 +100,6 @@ async def start_command(client: Client, message: Message):
                 id = message.from_user.id
             ),
             reply_markup = reply_markup,
-            disable_web_page_preview = True,
             quote = True
         )
         return
@@ -119,12 +116,13 @@ REPLY_ERROR = """<code>Use this command as a replay to any telegram message with
     
     
 @Bot.on_message(filters.command('start') & filters.private)
+#@ratelimiter
 async def not_joined(client: Client, message: Message):
     buttons = [
         [
-            InlineKeyboardButton(
-                "Join Channel",
-                url = client.invitelink)
+            InlineKeyboardButton("Join Channel", url = "https://t.me/+QDPJMQQ0ME9kMzIx")
+        ],[
+            InlineKeyboardButton("Join Channel", url = client.invitelink)
         ]
     ]
     try:
@@ -149,7 +147,7 @@ async def not_joined(client: Client, message: Message):
             ),
         reply_markup = InlineKeyboardMarkup(buttons),
         quote = True,
-        disable_web_page_preview = True
+        disable_web_page_preview = false
     )
 
 @Bot.on_message(filters.command('users') & filters.private & filters.user(ADMINS))
