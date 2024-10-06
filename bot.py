@@ -1,4 +1,3 @@
-
 from aiohttp import web
 from plugins import web_server
 
@@ -42,10 +41,11 @@ class Bot(Client):
                 self.LOGGER(__name__).warning(f"Please Double check the FORCE_SUB_CHANNEL value and Make sure Bot is Admin in channel with Invite Users via Link Permission, Current Force Sub Channel Value: {FORCE_SUB_CHANNEL}")
                 self.LOGGER(__name__).info("\nBot Stopped.")
                 sys.exit()
+
         try:
             db_channel = await self.get_chat(CHANNEL_ID)
             self.db_channel = db_channel
-            test = await self.send_message(chat_id = db_channel.id, text = "Test Message")
+            test = await self.send_message(chat_id=db_channel.id, text="Test Message")
             await test.delete()
         except Exception as e:
             self.LOGGER(__name__).warning(e)
@@ -55,15 +55,22 @@ class Bot(Client):
 
         self.set_parse_mode(ParseMode.HTML)
         self.LOGGER(__name__).info(f"Bot Running..!")
-        self.LOGGER(__name__).info(f""" \n\n      
+        self.LOGGER(__name__).info(f""" 
         Bot Started.................................................Have Fun!!!
-                                          """)
+        """)
+
         self.username = usr_bot_me.username
-        #web-response
-        app = web.AppRunner(await web_server())
-        await app.setup()
+        
+        # Web server setup
+        app = await web_server()  # Ensure web_server is an async function returning an application
+        runner = web.AppRunner(app)
+        await runner.setup()
+        
         bind_address = "0.0.0.0"
-        await web.TCPSite(app, bind_address, PORT).start()
+        site = web.TCPSite(runner, bind_address, PORT)
+        await site.start()
+        
+        self.LOGGER(__name__).info(f"Web server running on http://{bind_address}:{PORT}")
 
     async def stop(self, *args):
         await super().stop()
