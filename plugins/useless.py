@@ -29,11 +29,18 @@ async def stats(bot: Bot, message: Message):
 @Bot.on_message(filters.private & filters.incoming)
 async def useless(_, message: Message):
     try:
-        # Only send reply to non-admin users
-        if message.from_user.id not in ADMINS:
+        # Log the user ID and ADMINS list for debugging
+        logger.debug(f"Received message from: {message.from_user.id}")
+        logger.debug(f"ADMINS list: {ADMINS}")
+
+        # Ensure the user ID is an integer and check against the ADMINS list
+        if int(message.from_user.id) not in ADMINS:
             if USER_REPLY_TEXT:
                 await message.reply(USER_REPLY_TEXT)
                 logger.info(f"Sent USER_REPLY_TEXT to {message.from_user.id}")
+        else:
+            # Log that the user is an admin and no reply is sent
+            logger.info(f"Admin {message.from_user.id} sent a message, no reply.")
     except Exception as e:
         logger.error(f"Error in useless handler: {e}", exc_info=True)
         await message.reply("An error occurred.")
