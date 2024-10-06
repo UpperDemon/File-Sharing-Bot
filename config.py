@@ -18,10 +18,15 @@ if not API_HASH:
     raise ValueError("API_HASH environment variable is required.")
 
 # Your db channel Id
-CHANNEL_ID = int(os.environ.get("CHANNEL_ID", ""))
+
+CHANNEL_ID = os.environ.get("CHANNEL_ID", "")
+print(f"CHANNEL_ID environment variable: '{CHANNEL_ID}'")  # Debugging output
+try:
+    CHANNEL_ID = int(CHANNEL_ID)
+except ValueError:
+    raise ValueError("CHANNEL_ID must be an integer.")
 if CHANNEL_ID <= 0:
     raise ValueError("Invalid CHANNEL_ID.")
-
 # Start Image
 START_IMG = os.environ.get("START_IMG", "https://telegra.ph/file/96f14d44c4369420bd9dd.jpg")
 
