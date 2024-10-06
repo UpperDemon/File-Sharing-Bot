@@ -25,8 +25,8 @@ async def stats(bot: Bot, message: Message):
         logger.error(f"Error in /stats command: {e}", exc_info=True)
         await message.reply("An error occurred while processing the command.")
 
-
-@Bot.on_message(filters.private & filters.incoming)
+# This function will now only reply to regular text messages, NOT commands.
+@Bot.on_message(filters.private & filters.incoming & filters.text)
 async def useless(_, message: Message):
     try:
         # Log the user ID and ADMINS list for debugging
