@@ -13,7 +13,9 @@ async def stats(bot: Bot, message: Message):
     await message.reply(BOT_STATS_TEXT.format(uptime=time))
 
 
-@Bot.on_message(filters.private)
-async def useless(_,message: Message):
-    if USER_REPLY_TEXT:
-        await message.reply(USER_REPLY_TEXT)
+@Bot.on_message(filters.private & filters.incoming)
+async def useless(_, message: Message):
+    # Only send reply to non-admin users
+    if message.from_user.id not in ADMINS:
+        if USER_REPLY_TEXT:
+            await message.reply(USER_REPLY_TEXT)
