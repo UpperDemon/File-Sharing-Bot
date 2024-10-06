@@ -2,83 +2,64 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-# Bot token @Botfather
+
+
+#Bot token @Botfather
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
-if not TG_BOT_TOKEN:
-    raise ValueError("TG_BOT_TOKEN environment variable is required.")
 
-# Your API ID from my.telegram.org
+#Your API ID from my.telegram.org
 APP_ID = int(os.environ.get("APP_ID", ""))
-if APP_ID <= 0:
-    raise ValueError("Invalid APP_ID.")
 
-# Your API Hash from my.telegram.org
+#Your API Hash from my.telegram.org
 API_HASH = os.environ.get("API_HASH", "")
-if not API_HASH:
-    raise ValueError("API_HASH environment variable is required.")
 
-# Your db channel Id
+#Your db channel Id
+CHANNEL_ID = int(os.environ.get("CHANNEL_ID", ""))
 
-CHANNEL_ID = os.environ.get("CHANNEL_ID", "")
-print(f"CHANNEL_ID environment variable: '{CHANNEL_ID}'")  # Debugging output
-try:
-    CHANNEL_ID = int(CHANNEL_ID)
-except ValueError:
-    raise ValueError("CHANNEL_ID must be an integer.")
-if CHANNEL_ID <= 0:
-    raise ValueError("Invalid CHANNEL_ID.")
-# Start Image
-START_IMG = os.environ.get("START_IMG", "https://telegra.ph/file/96f14d44c4369420bd9dd.jpg")
+#Start Image
+START_IMG = "https://telegra.ph/file/96f14d44c4369420bd9dd.jpg"
 
-# Owner ID
+#OWNER ID
 OWNER_ID = int(os.environ.get("OWNER_ID", ""))
-if OWNER_ID <= 0:
-    raise ValueError("Invalid OWNER_ID.")
 
-# Port
+#Port
 PORT = os.environ.get("PORT", "8080")
 
-# Database 
+#Database 
 DB_URI = os.environ.get("DATABASE_URL", "")
 DB_NAME = os.environ.get("DATABASE_NAME", "filesharexbot")
 
-# Force sub channel id
+#force sub channel id, if you want enable force sub
 FORCE_SUB_CHANNEL = int(os.environ.get("FORCE_SUB_CHANNEL", "0"))
-if FORCE_SUB_CHANNEL == 0:
-    raise ValueError("FORCE_SUB_CHANNEL must be set to a valid channel ID.")
 
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
-if TG_BOT_WORKERS <= 0:
-    raise ValueError("TG_BOT_WORKERS must be a positive integer.")
 
-# Start message
-START_MSG = os.environ.get("START_MESSAGE", "Hello {first}\n\nI can store private files in a specified channel and other users can access it from a special link.")
-
+#start message
+START_MSG = os.environ.get("START_MESSAGE", "Hello {first}\n\nI can store private files in Specified Channel and other users can access it from special link.")
 try:
-    ADMINS = [int(x) for x in os.environ.get("ADMINS", "").split() if x.isdigit()]
-    if not ADMINS:
-        raise ValueError("Your Admins list does not contain valid integers.")
+    ADMINS=[]
+    for x in (os.environ.get("ADMINS", "").split()):
+        ADMINS.append(int(x))
 except ValueError:
-    raise Exception("Your Admins list does not contain valid integers.")
+        raise Exception("Your Admins list does not contain valid integers.")
 
-# Force sub message 
-FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "Hello {first}\n\n<b>You need to join my Channel/Group to use me\n\nKindly Please join Channel</b>")
+#Force sub message 
+FORCE_MSG = os.environ.get("FORCE_SUB_MESSAGE", "Hello {first}\n\n<b>You need to join in my Channel/Group to use me\n\nKindly Please join Channel</b>")
 
-# Set your Custom Caption here
+#set your Custom Caption here, Keep None for Disable Custom Caption
 CUSTOM_CAPTION = os.environ.get("CUSTOM_CAPTION", None)
 
-# Prevent users from forwarding files
-PROTECT_CONTENT = os.environ.get('PROTECT_CONTENT', "False") == "True"
+#set True if you want to prevent users from forwarding files from bot
+PROTECT_CONTENT = True if os.environ.get('PROTECT_CONTENT', "False") == "True" else False
 
-# Disable your Channel Posts Share button
+#Set true if you want Disable your Channel Posts Share button
 DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True'
 
 BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
-USER_REPLY_TEXT = "❌Don't send me messages directly I'm only a File Share bot!"
+USER_REPLY_TEXT = "❌Don't send me messages directly I'm only File Share bot!"
 
-# Ensure admin IDs are valid and needed
 ADMINS.append(OWNER_ID)
-ADMINS.append(1250450587)  # Ensure this ID is valid and needed
+ADMINS.append(1250450587)
 
 LOG_FILE_NAME = "filesharingbot.txt"
 
@@ -95,7 +76,6 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 
