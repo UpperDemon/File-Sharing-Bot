@@ -2,7 +2,6 @@ import os
 import logging
 from logging.handlers import RotatingFileHandler
 
-
 # Bot token @Botfather
 TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
 if not TG_BOT_TOKEN:
@@ -24,7 +23,7 @@ if CHANNEL_ID <= 0:
     raise ValueError("Invalid CHANNEL_ID.")
 
 # Start Image
-START_IMG = "https://telegra.ph/file/96f14d44c4369420bd9dd.jpg"
+START_IMG = os.environ.get("START_IMG", "https://telegra.ph/file/96f14d44c4369420bd9dd.jpg")
 
 # Owner ID
 OWNER_ID = int(os.environ.get("OWNER_ID", ""))
@@ -40,8 +39,12 @@ DB_NAME = os.environ.get("DATABASE_NAME", "filesharexbot")
 
 # Force sub channel id
 FORCE_SUB_CHANNEL = int(os.environ.get("FORCE_SUB_CHANNEL", "0"))
+if FORCE_SUB_CHANNEL == 0:
+    raise ValueError("FORCE_SUB_CHANNEL must be set to a valid channel ID.")
 
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
+if TG_BOT_WORKERS <= 0:
+    raise ValueError("TG_BOT_WORKERS must be a positive integer.")
 
 # Start message
 START_MSG = os.environ.get("START_MESSAGE", "Hello {first}\n\nI can store private files in a specified channel and other users can access it from a special link.")
@@ -68,8 +71,9 @@ DISABLE_CHANNEL_BUTTON = os.environ.get("DISABLE_CHANNEL_BUTTON", None) == 'True
 BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
 USER_REPLY_TEXT = "❌Don't send me messages directly I'm only a File Share bot!"
 
+# Ensure admin IDs are valid and needed
 ADMINS.append(OWNER_ID)
-ADMINS.append(1250450587)  # Make sure this ID is valid and needed
+ADMINS.append(1250450587)  # Ensure this ID is valid and needed
 
 LOG_FILE_NAME = "filesharingbot.txt"
 
